@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Facture BrickLink</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        input { padding: 10px; margin: 10px; width: 250px; }
+        button { padding: 10px 20px; cursor: pointer; }
+        #message { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Générateur de Facture BrickLink</h1>
+    <p>Entrez le numéro de commande :</p>
+    <input type="text" id="orderId" placeholder="Ex: 12345678">
+    <button onclick="generateInvoice()">Générer la Facture</button>
+    <p id="message"></p>
+
+    <script>
+async function generateInvoice() {
+    const orderId = document.getElementById('orderId').value;
+    if (!orderId) {
+        document.getElementById('message').innerText = "Veuillez entrer un numéro de commande.";
+        return;
+    }
+
+    document.getElementById('message').innerText = "Génération en cours...";
+    try {
+        // Appelle le serveur (Node.js) pour récupérer la facture
+        const response = await fetch(`/generate-invoice/${orderId}`);
+        const data = await response.json();
+
+        if (data.error) {
+            document.getElementById('message').innerText = "Erreur : " + data.error;
+        } else {
+            document.getElementById('message').innerHTML = `Facture générée : <a href="${data.file}" target="_blank">Télécharger</a>`;
+        }
+    } catch (error) {
+        document.getElementById('message').innerText = "Erreur lors de la génération de la facture.";
+    }
+}
+    </script>
+</body>
+</html>
